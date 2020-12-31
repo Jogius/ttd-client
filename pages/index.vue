@@ -1,14 +1,14 @@
 <template>
-  <v-container fluid fill-height>
+  <v-container v-if="!$store.state.auth.token" fluid fill-height>
     <v-row justify="center">
       <v-spacer />
       <v-spacer />
       <v-text-field
+        v-if="!$store.state.status.started"
         v-model="input.username"
         counter
         outlined
         label="Benutzername"
-        prepend-inner-icon="mdi-numeric"
         append-icon="mdi-send"
         color="info"
         maxlength="30"
@@ -17,6 +17,7 @@
         :rules="rules.create"
         @click:append="create"
       />
+      <h1 v-else>Der Test wurde bereits gestartet</h1>
       <v-spacer />
       <v-spacer />
     </v-row>
@@ -24,7 +25,7 @@
       <v-spacer />
       <v-spacer />
       <v-text-field
-        v-model="input.code"
+        v-model="input.token"
         counter
         outlined
         persistent-hint
@@ -43,16 +44,48 @@
       <v-spacer />
     </v-row>
   </v-container>
+  <v-container v-else-if="$store.state.voting" fluid fill-height>
+    <v-row justify="center">
+      <v-spacer />
+      <v-spacer />
+      <h1>Wer ist der Bot?</h1>
+      <v-spacer />
+      <v-spacer />
+    </v-row>
+    <v-row justify="center">
+      <v-spacer />
+      <v-spacer />
+      <v-btn icon x-large>
+        <v-icon x-large color="partner1">mdi-numeric-1-box</v-icon>
+      </v-btn>
+      <v-spacer />
+      <v-btn icon x-large>
+        <v-icon x-large color="partner2">mdi-numeric-2-box</v-icon>
+      </v-btn>
+      <v-spacer />
+      <v-spacer />
+    </v-row>
+  </v-container>
+  <v-container v-else-if="!$store.state.chatting" fluid>
+    <v-row justify="center">
+      <h1>Bitte warte, bis die Chats freigegeben werden!</h1>
+    </v-row>
+    <v-row justify="center">
+      <v-subheader>
+        In der Zeit kannst du deinen Code (siehe Fußzeile) kopieren!
+      </v-subheader>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import config from 'assets/config'
+import config from '~/assets/config'
 
 export default {
   data() {
     return {
       input: {
-        code: '',
+        token: '',
         username: '',
       },
       loading: {
@@ -78,16 +111,30 @@ export default {
       },
     }
   },
+  beforeMount() {
+    if (this.$store.state.chatting) this.$router.push('/chats')
+  },
   methods: {
     join() {
       // Validation
       let valid = true
       this.rules.join.forEach((rule) => {
-        if (typeof rule(this.input.code) === 'string') valid = false
+        if (typeof rule(this.input.token) === 'string') valid = false
       })
       if (!valid) return
 
       this.loadingJoin = true
+      this.$axios
+        .$post(`${config.SERVER_URL}/auth/join`, { token: this.input.token })
+        .then((res) => {
+          this.$store.commit('auth/setToken', res.token)
+          this.$store.commit('authsetUsername', res.username)
+          this.loadingJoin = false
+        })
+        .catch((err) => {
+          alert(err)
+          this.loadingJoin = false
+        })
     },
     create() {
       // Validation
@@ -99,9 +146,12 @@ export default {
 
       this.loadingCreate = true
       this.$axios
-        .$post(`${config.SERVER_URL}/create`, { username: this.input.username })
+        .$post(`${config.SERVER_URL}/auth/create`, {
+          username: this.input.username,
+        })
         .then((res) => {
-          this.$store.commit('setToken', res.token)
+          this.$store.commit('auth/setToken', res.token)
+          this.$store.commit('auth/setUsername', res.username)
           this.loadingCreate = false
         })
         .catch((err) => {

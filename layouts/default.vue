@@ -11,7 +11,13 @@
       <v-btn icon to="/" router exact>
         <v-icon>mdi-home</v-icon>
       </v-btn>
-      <v-btn v-if="$store.state.authToken" icon to="/chats" router exact>
+      <v-btn
+        v-if="$store.state.auth.token && $store.state.chatting"
+        icon
+        to="/chats"
+        router
+        exact
+      >
         <v-badge :content="unreadMsg" :value="unreadMsg" color="info" overlap>
           <v-icon>mdi-chat</v-icon>
         </v-badge>
@@ -33,15 +39,38 @@
       </v-container>
     </v-main>
     <v-footer app color="primary">
-      <v-btn v-if="$store.state.authToken" icon to="/chats">
+      <v-btn
+        v-if="$store.state.auth.token && $store.state.chatting"
+        icon
+        to="/chats"
+      >
         <v-badge :content="unreadMsg" :value="unreadMsg" color="info" overlap>
           <v-icon>mdi-chat</v-icon>
         </v-badge>
       </v-btn>
       <v-spacer />
-      <span>
+      <v-spacer />
+      <v-spacer />
+      <v-spacer />
+      <v-spacer />
+      <v-text-field
+        v-if="$store.state.auth.token"
+        v-model="$store.state.auth.token"
+        outlined
+        hide-details
+        readonly
+        dense
+        prepend-inner-icon="mdi-numeric"
+        append-icon="mdi-content-copy"
+        @click:append="copy"
+      />
+      <span v-else>
         &copy; {{ new Date().getFullYear() }} - <strong>ttd</strong>
       </span>
+      <v-spacer />
+      <v-spacer />
+      <v-spacer />
+      <v-spacer />
       <v-spacer />
       <v-btn icon to="/">
         <v-icon>mdi-home</v-icon>
@@ -57,6 +86,11 @@ export default {
       unreadMsg: 0,
       title: 'Turing Test Deutsch',
     }
+  },
+  methods: {
+    copy() {
+      navigator.clipboard.writeText(this.$store.state.auth.token)
+    },
   },
 }
 </script>

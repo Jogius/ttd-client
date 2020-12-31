@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid fill-height>
-    <v-flex>
+  <v-container fluid fill-height class="pa-0">
+    <v-row no-gutters>
       <v-container v-for="(msg, i) in messages" :key="i"> </v-container>
-    </v-flex>
+    </v-row>
   </v-container>
 </template>
 
@@ -20,7 +20,7 @@ export default {
     }
   },
   beforeMount() {
-    if (!this.$store.state.authToken) this.$router.push('/')
+    if (!this.$store.state.chatting) this.$router.push('/')
   },
 }
 </script>

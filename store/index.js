@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 export const plugins = [
   createPersistedState({
     key: 'ttd',
+    paths: ['auth', 'chats'],
     storage: {
       getItem: (key) => Cookies.get(key),
       setItem: (key, value) => Cookies.set(key, value),
@@ -12,16 +13,6 @@ export const plugins = [
   }),
 ]
 
-export const state = () => ({
-  authToken: '',
-  username: '',
-})
+export const state = () => ({})
 
-export const mutations = {
-  setToken(state, token) {
-    state.authToken = token
-  },
-  setUsername(state, username) {
-    state.username = username
-  },
-}
+export const mutations = {}
