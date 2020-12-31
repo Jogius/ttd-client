@@ -19,5 +19,8 @@ export default {
       ],
     }
   },
+  beforeMount() {
+    if (!this.$store.state.authToken) this.$router.push('/')
+  },
 }
 </script>

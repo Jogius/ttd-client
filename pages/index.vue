@@ -101,6 +101,7 @@ export default {
       this.$axios
         .$post(`${config.SERVER_URL}/create`, { username: this.input.username })
         .then((res) => {
+          this.$store.commit('setToken', res.token)
           this.loadingCreate = false
         })
         .catch((err) => {

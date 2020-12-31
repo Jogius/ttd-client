@@ -11,7 +11,7 @@
       <v-btn icon to="/" router exact>
         <v-icon>mdi-home</v-icon>
       </v-btn>
-      <v-btn v-if="joined" icon to="/chats" router exact>
+      <v-btn v-if="$store.state.authToken" icon to="/chats" router exact>
         <v-badge :content="unreadMsg" :value="unreadMsg" color="info" overlap>
           <v-icon>mdi-chat</v-icon>
         </v-badge>
@@ -33,7 +33,7 @@
       </v-container>
     </v-main>
     <v-footer app color="primary">
-      <v-btn v-if="joined" icon to="/chats">
+      <v-btn v-if="$store.state.authToken" icon to="/chats">
         <v-badge :content="unreadMsg" :value="unreadMsg" color="info" overlap>
           <v-icon>mdi-chat</v-icon>
         </v-badge>
@@ -54,7 +54,6 @@
 export default {
   data() {
     return {
-      joined: false,
       unreadMsg: 0,
       title: 'Turing Test Deutsch',
     }
