@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="!$store.state.auth.token" fluid fill-height>
+  <v-container v-if="!$store.state.auth.token" fill-height>
     <v-row justify="center">
       <v-spacer />
       <v-spacer />
@@ -44,7 +44,7 @@
       <v-spacer />
     </v-row>
   </v-container>
-  <v-container v-else-if="$store.state.voting" fluid fill-height>
+  <v-container v-else-if="$store.state.status.voting" fill-height>
     <v-row justify="center">
       <v-spacer />
       <v-spacer />
@@ -66,7 +66,7 @@
       <v-spacer />
     </v-row>
   </v-container>
-  <v-container v-else-if="!$store.state.chatting" fluid>
+  <v-container v-else-if="!$store.state.status.chatting" fluid>
     <v-row justify="center">
       <h1>Bitte warte, bis die Chats freigegeben werden!</h1>
     </v-row>
@@ -112,7 +112,7 @@ export default {
     }
   },
   beforeMount() {
-    if (this.$store.state.chatting) this.$router.push('/chats')
+    if (this.$store.state.status.chatting) this.$router.push('/chats')
   },
   methods: {
     join() {
