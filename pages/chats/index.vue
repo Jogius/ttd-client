@@ -16,6 +16,8 @@
               v-model="input.message"
               outlined
               hide-details
+              counter
+              maxlength="160"
               label="Nachricht"
               append-icon="mdi-send"
               color="info"
@@ -41,6 +43,8 @@
               v-model="input.message"
               outlined
               hide-details
+              counter
+              maxlength="160"
               label="Nachricht"
               append-icon="mdi-send"
               color="info"
