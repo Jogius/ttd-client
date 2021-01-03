@@ -9,25 +9,31 @@ export const mutations = {
   start(state) {
     state.started = true
   },
-  end(state) {
+  stop(state) {
     state.started = false
   },
   startChatting(state) {
     state.chatting = true
   },
-  endChatting(state) {
+  stopChatting(state) {
     state.chatting = false
   },
   startVoting(state) {
     state.voting = true
   },
-  endVoting(state) {
+  stopVoting(state) {
     state.voting = false
   },
   startResults(state) {
     state.results = true
   },
-  endResults(state) {
+  stopResults(state) {
+    state.results = false
+  },
+  reset(state) {
+    state.started = false
+    state.chatting = false
+    state.voting = false
     state.results = false
   },
 }

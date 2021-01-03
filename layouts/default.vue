@@ -7,12 +7,18 @@
       ].background,
     }"
   >
-    <v-app-bar fixed app color="primary" elevation="0" collapse-on-scroll>
-      <v-btn icon to="/" router exact>
+    <v-app-bar fixed app color="primary" elevation="0">
+      <v-btn
+        v-if="!($store.state.auth.userToken && $store.state.status.chatting)"
+        icon
+        to="/"
+        router
+        exact
+      >
         <v-icon>mdi-home</v-icon>
       </v-btn>
       <v-btn
-        v-if="$store.state.auth.token && $store.state.chatting"
+        v-if="$store.state.auth.userToken && $store.state.status.chatting"
         icon
         to="/chats"
         router
@@ -40,7 +46,7 @@
     </v-main>
     <v-footer app color="primary">
       <v-btn
-        v-if="$store.state.auth.token && $store.state.chatting"
+        v-if="$store.state.auth.userToken && $store.state.status.chatting"
         icon
         to="/chats"
       >
@@ -54,8 +60,8 @@
       <v-spacer />
       <v-spacer />
       <v-text-field
-        v-if="$store.state.auth.token"
-        v-model="$store.state.auth.token"
+        v-if="$store.state.auth.userToken"
+        v-model="$store.state.auth.userToken"
         outlined
         hide-details
         readonly
@@ -72,7 +78,11 @@
       <v-spacer />
       <v-spacer />
       <v-spacer />
-      <v-btn icon to="/">
+      <v-btn
+        v-if="!($store.state.auth.userToken && $store.state.status.chatting)"
+        icon
+        to="/"
+      >
         <v-icon>mdi-home</v-icon>
       </v-btn>
     </v-footer>
@@ -87,9 +97,10 @@ export default {
       title: 'Turing Test Deutsch',
     }
   },
+  beforeCreate() {},
   methods: {
     copy() {
-      navigator.clipboard.writeText(this.$store.state.auth.token)
+      navigator.clipboard.writeText(this.$store.state.auth.userToken)
     },
   },
 }
