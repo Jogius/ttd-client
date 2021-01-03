@@ -6,14 +6,14 @@
           <v-card-title>Chat 1</v-card-title>
           <v-card-text ref="chat1" class="flex-grow-1 overflow-y-auto">
             <v-message
-              v-for="(msg, i) in $store.state.chats.chat1.messages"
+              v-for="(msg, i) in $store.state.chat1.messages"
               :key="i"
               :message="msg"
             />
           </v-card-text>
           <v-card-text class="flex-shrink-1">
             <v-text-field
-              v-model="input.message"
+              v-model="chat1.input.message"
               outlined
               hide-details
               counter
@@ -21,9 +21,10 @@
               label="Nachricht"
               append-icon="mdi-send"
               color="info"
-              :loading="loading.sending"
-              :disabled="loading.sending"
+              :loading="chat1.loading.sending"
+              :disabled="chat1.loading.sending"
               @click:append="sendChat1"
+              @keydown.enter="sendChat1"
             />
           </v-card-text>
         </v-card>
@@ -33,14 +34,14 @@
           <v-card-title>Chat 2</v-card-title>
           <v-card-text ref="chat2" class="flex-grow-1 overflow-y-auto">
             <v-message
-              v-for="(msg, i) in $store.state.chats.chat2.messages"
+              v-for="(msg, i) in $store.state.chat2.messages"
               :key="i"
               :message="msg"
             />
           </v-card-text>
           <v-card-text class="flex-shrink-1">
             <v-text-field
-              v-model="input.message"
+              v-model="chat2.input.message"
               outlined
               hide-details
               counter
@@ -48,9 +49,10 @@
               label="Nachricht"
               append-icon="mdi-send"
               color="info"
-              :loading="loading.sending"
-              :disabled="loading.sending"
+              :loading="chat2.loading.sending"
+              :disabled="chat2.loading.sending"
               @click:append="sendChat2"
+              @keydown.enter="sendChat2"
             />
           </v-card-text>
         </v-card>
@@ -66,11 +68,21 @@ export default {
   components: { vMessage },
   data() {
     return {
-      input: {
-        message: '',
+      chat1: {
+        input: {
+          message: '',
+        },
+        loading: {
+          sending: false,
+        },
       },
-      loading: {
-        sending: false,
+      chat2: {
+        input: {
+          message: '',
+        },
+        loading: {
+          sending: false,
+        },
       },
     }
   },
@@ -79,12 +91,19 @@ export default {
   },
   methods: {
     sendChat1() {
-      this.$refs.chat1.scrollTop = this.$refs.chat1.lastChild.offsetTop
+      this.$socket.emit('chat1/message', this.chat1.input.message)
+      this.$store.commit('chat1/sendMessage', this.chat1.input.message)
+      this.chat1.input.message = ''
+      this.$refs.chat1.scrollTop =
+        this.$refs.chat1.lastChild && this.$refs.chat1.lastChild.offsetTop
     },
     sendChat2() {
-      this.$refs.chat2.scrollTop = this.$refs.chat2.lastChild.offsetTop
+      this.$socket.emit('chat2/message', this.chat2.input.message)
+      this.$store.commit('chat2/sendMessage', this.chat2.input.message)
+      this.chat2.input.message = ''
+      this.$refs.chat2.scrollTop =
+        this.$refs.chat2.lastChild && this.$refs.chat2.lastChild.offsetTop
     },
   },
 }
-// <v-container v-for="(msg, i) in messages" :key="i"> </v-container>
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="!$store.state.auth.token" fill-height>
+  <v-container v-if="!$store.state.auth.userToken" fill-height class="pa-0">
     <v-row justify="center">
       <v-spacer />
       <v-spacer />
@@ -16,6 +16,7 @@
         :disabled="loading.create || loading.join"
         :rules="rules.create"
         @click:append="create"
+        @keydown.enter="create"
       />
       <h1 v-else>Der Test wurde bereits gestartet</h1>
       <v-spacer />
@@ -25,7 +26,7 @@
       <v-spacer />
       <v-spacer />
       <v-text-field
-        v-model="input.token"
+        v-model="input.userToken"
         counter
         outlined
         persistent-hint
@@ -39,12 +40,13 @@
         :disabled="loading.join || loading.create"
         :rules="rules.join"
         @click:append="join"
+        @keydown.enter="join"
       />
       <v-spacer />
       <v-spacer />
     </v-row>
   </v-container>
-  <v-container v-else-if="$store.state.status.voting" fill-height>
+  <v-container v-else-if="$store.state.status.voting" fill-height class="pa-0">
     <v-row justify="center">
       <v-spacer />
       <v-spacer />
@@ -79,13 +81,13 @@
 </template>
 
 <script>
-import config from '~/assets/config'
+// import config from '~/assets/config'
 
 export default {
   data() {
     return {
       input: {
-        token: '',
+        userToken: '',
         username: '',
       },
       loading: {
@@ -119,22 +121,12 @@ export default {
       // Validation
       let valid = true
       this.rules.join.forEach((rule) => {
-        if (typeof rule(this.input.token) === 'string') valid = false
+        if (typeof rule(this.input.userToken) === 'string') valid = false
       })
       if (!valid) return
 
       this.loadingJoin = true
-      this.$axios
-        .$post(`${config.SERVER_URL}/auth/join`, { token: this.input.token })
-        .then((res) => {
-          this.$store.commit('auth/setToken', res.token)
-          this.$store.commit('authsetUsername', res.username)
-          this.loadingJoin = false
-        })
-        .catch((err) => {
-          alert(err)
-          this.loadingJoin = false
-        })
+      this.$socket.emit('auth/join', this.input.userToken)
     },
     create() {
       // Validation
@@ -145,19 +137,7 @@ export default {
       if (!valid) return
 
       this.loadingCreate = true
-      this.$axios
-        .$post(`${config.SERVER_URL}/auth/create`, {
-          username: this.input.username,
-        })
-        .then((res) => {
-          this.$store.commit('auth/setToken', res.token)
-          this.$store.commit('auth/setUsername', res.username)
-          this.loadingCreate = false
-        })
-        .catch((err) => {
-          alert(err)
-          this.loadingCreate = false
-        })
+      this.$socket.emit('auth/create', this.input.username)
     },
   },
 }
