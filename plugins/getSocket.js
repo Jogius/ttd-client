@@ -57,11 +57,6 @@ export default function (app, inject) {
     window.location.reload()
   })
 
-  socket.on('auth/login', ({ username, userToken }) => {
-    app.store.commit('auth/setToken', userToken)
-    app.store.commit('auth/setUsername', username)
-  })
-
   if (app.store.state.auth.userToken) {
     socket.emit('auth/newSocket', app.store.state.auth.userToken)
   } else {
