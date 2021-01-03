@@ -126,7 +126,14 @@ export default {
       if (!valid) return
 
       this.loadingJoin = true
-      this.$socket.emit('auth/join', this.input.userToken)
+      this.$socket.emit(
+        'auth/join',
+        this.input.userToken,
+        (username, userToken) => {
+          this.$store.commit('auth/setUsername', username)
+          this.$store.commit('auth/setToken', userToken)
+        }
+      )
     },
     create() {
       // Validation
@@ -137,7 +144,14 @@ export default {
       if (!valid) return
 
       this.loadingCreate = true
-      this.$socket.emit('auth/create', this.input.username)
+      this.$socket.emit(
+        'auth/create',
+        this.input.username,
+        (username, userToken) => {
+          this.$store.commit('auth/setUsername', username)
+          this.$store.commit('auth/setToken', userToken)
+        }
+      )
     },
   },
 }

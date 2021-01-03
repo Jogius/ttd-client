@@ -84,6 +84,9 @@ export default {
           sending: false,
         },
       },
+      rules: {
+        message: [(value) => !!value],
+      },
     }
   },
   beforeMount() {
@@ -91,14 +94,24 @@ export default {
   },
   methods: {
     sendChat1() {
-      this.$socket.emit('chat1/message', this.chat1.input.message)
+      if (!this.chat1.input.message) return
+
+      this.$socket.emit('chat1/message', {
+        message: this.chat1.input.message,
+        userToken: this.$store.state.auth.userToken,
+      })
       this.$store.commit('chat1/sendMessage', this.chat1.input.message)
       this.chat1.input.message = ''
       this.$refs.chat1.scrollTop =
         this.$refs.chat1.lastChild && this.$refs.chat1.lastChild.offsetTop
     },
     sendChat2() {
-      this.$socket.emit('chat2/message', this.chat2.input.message)
+      if (!this.chat2.input.message) return
+
+      this.$socket.emit('chat2/message', {
+        message: this.chat2.input.message,
+        userToken: this.$store.state.auth.userToken,
+      })
       this.$store.commit('chat2/sendMessage', this.chat2.input.message)
       this.chat2.input.message = ''
       this.$refs.chat2.scrollTop =
