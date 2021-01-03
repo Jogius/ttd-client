@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'd-flex flex-row-reverse': message.me }">
+  <div class="d-flex" :class="{ 'flex-row-reverse': message.me }">
     <v-card
       class="message-container pa-4 mb-2 text-wrap"
       :color="message.me ? 'primary' : 'secondary'"
