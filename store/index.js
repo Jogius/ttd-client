@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 export const plugins = [
   createPersistedState({
     key: 'ttd',
-    paths: ['auth', 'chats'],
+    paths: ['auth', 'chat1', 'chat2'],
     storage: {
       getItem: (key) => Cookies.get(key),
       setItem: (key, value) => Cookies.set(key, value),
