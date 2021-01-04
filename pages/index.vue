@@ -113,7 +113,7 @@ export default {
       },
     }
   },
-  beforeMount() {
+  beforeCreate() {
     if (this.$store.state.status.chatting) this.$router.push('/chats')
   },
   methods: {

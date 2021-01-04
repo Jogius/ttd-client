@@ -89,8 +89,44 @@ export default {
       },
     }
   },
-  beforeMount() {
+  beforeCreate() {
     if (!this.$store.state.status.chatting) this.$router.push('/')
+  },
+  mounted() {
+    this.$refs.chat1.scroll({
+      top: this.$refs.chat1.scrollHeight,
+      behavior: 'instant',
+    })
+    this.$refs.chat2.scroll({
+      top: this.$refs.chat2.scrollHeight,
+      behavior: 'instant',
+    })
+    this.$store.watch(
+      (state) => {
+        return state.chat1.messages
+      },
+      () => {
+        if (this.$refs.chat1 && this.$refs.chat1.scroll) {
+          this.$refs.chat1.scroll({
+            top: this.$refs.chat1.scrollHeight,
+            behavior: 'instant',
+          })
+        }
+      }
+    )
+    this.$store.watch(
+      (state) => {
+        return state.chat2.messages
+      },
+      () => {
+        if (this.$refs.chat2 && this.$refs.chat2.scroll) {
+          this.$refs.chat2.scroll({
+            top: this.$refs.chat2.scrollHeight,
+            behavior: 'instant',
+          })
+        }
+      }
+    )
   },
   methods: {
     sendChat1() {
@@ -102,8 +138,6 @@ export default {
       })
       this.$store.commit('chat1/sendMessage', this.chat1.input.message)
       this.chat1.input.message = ''
-      this.$refs.chat1.scrollTop =
-        this.$refs.chat1.lastChild && this.$refs.chat1.lastChild.offsetTop
     },
     sendChat2() {
       if (!this.chat2.input.message) return
@@ -114,9 +148,24 @@ export default {
       })
       this.$store.commit('chat2/sendMessage', this.chat2.input.message)
       this.chat2.input.message = ''
-      this.$refs.chat2.scrollTop =
-        this.$refs.chat2.lastChild && this.$refs.chat2.lastChild.offsetTop
     },
   },
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #666;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:active {
+  background-color: #777;
+}
+</style>
