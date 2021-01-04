@@ -81,8 +81,6 @@
 </template>
 
 <script>
-// import config from '~/assets/config'
-
 export default {
   data() {
     return {
@@ -114,7 +112,8 @@ export default {
     }
   },
   beforeCreate() {
-    if (this.$store.state.status.chatting) this.$router.push('/chats')
+    if (this.$store.state.status.chatting && this.$store.state.auth.userToken)
+      this.$router.push('/chats')
   },
   methods: {
     join() {

@@ -90,7 +90,8 @@ export default {
     }
   },
   beforeCreate() {
-    if (!this.$store.state.status.chatting) this.$router.push('/')
+    if (!this.$store.state.status.chatting || !this.$store.auth.userToken)
+      this.$router.push('/')
   },
   mounted() {
     this.$refs.chat1.scroll({
