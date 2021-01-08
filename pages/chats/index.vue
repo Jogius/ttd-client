@@ -22,7 +22,8 @@
               append-icon="mdi-send"
               color="info"
               :loading="chat1.loading.sending"
-              :disabled="chat1.loading.sending"
+              :disabled="chat1.loading.sending || chat1.loading.blocked"
+              :rules="chat1.rules.message"
               @click:append="sendChat1"
               @keydown.enter="sendChat1"
             />
@@ -50,7 +51,8 @@
               append-icon="mdi-send"
               color="info"
               :loading="chat2.loading.sending"
-              :disabled="chat2.loading.sending"
+              :disabled="chat2.loading.sending || chat2.loading.blocked"
+              :rules="chat2.rules.message"
               @click:append="sendChat2"
               @keydown.enter="sendChat2"
             />
@@ -74,6 +76,15 @@ export default {
         },
         loading: {
           sending: false,
+          blocked: false,
+        },
+        rules: {
+          message: [
+            (value) => !!value,
+            (value) =>
+              RegExp('\\S').test(value) || 'Bitte gib eine Nachricht ein',
+            () => !this.chat1.loading.blocked || 'Bitte warte 3s',
+          ],
         },
       },
       chat2: {
@@ -82,15 +93,21 @@ export default {
         },
         loading: {
           sending: false,
+          blocked: false,
         },
-      },
-      rules: {
-        message: [(value) => !!value],
+        rules: {
+          message: [
+            (value) => !!value,
+            (value) =>
+              RegExp('\\S').test(value) || 'Bitte gib eine Nachricht ein',
+            () => !this.chat2.loading.blocked || 'Bitte warte 3s',
+          ],
+        },
       },
     }
   },
   beforeCreate() {
-    if (!this.$store.state.status.chatting || !this.$store.auth.userToken)
+    if (!this.$store.state.status.chatting || !this.$store.state.auth.userToken)
       this.$router.push('/')
   },
   mounted() {
@@ -131,7 +148,14 @@ export default {
   },
   methods: {
     sendChat1() {
-      if (!this.chat1.input.message) return
+      // Validation
+      let valid = true
+      this.chat1.rules.message.forEach((rule) => {
+        if (typeof rule(this.chat1.input.message) === 'string') valid = false
+      })
+      if (!valid) return
+
+      this.chat1.loading.sending = true
 
       this.$socket.emit('chat1/message', {
         message: this.chat1.input.message,
@@ -139,9 +163,22 @@ export default {
       })
       this.$store.commit('chat1/sendMessage', this.chat1.input.message)
       this.chat1.input.message = ''
+
+      this.chat1.loading.blocked = true
+      setTimeout(() => {
+        this.chat1.loading.blocked = false
+      }, 3000)
+      this.chat1.loading.sending = false
     },
     sendChat2() {
-      if (!this.chat2.input.message) return
+      // Validation
+      let valid = true
+      this.chat2.rules.message.forEach((rule) => {
+        if (typeof rule(this.chat2.input.message) === 'string') valid = false
+      })
+      if (!valid) return
+
+      this.chat2.loading.sending = true
 
       this.$socket.emit('chat2/message', {
         message: this.chat2.input.message,
@@ -149,6 +186,13 @@ export default {
       })
       this.$store.commit('chat2/sendMessage', this.chat2.input.message)
       this.chat2.input.message = ''
+
+      this.chat2.loading.blocked = true
+      setTimeout(() => {
+        this.chat2.loading.blocked = false
+      }, 3000)
+
+      this.chat2.loading.sending = false
     },
   },
 }
