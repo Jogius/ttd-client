@@ -14,6 +14,5 @@ export const mutations = {
   },
   reset(state) {
     state.messages = []
-    state.socket = undefined
   },
 }

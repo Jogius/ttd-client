@@ -3,6 +3,7 @@ export const state = () => ({
   chatting: false,
   voting: false,
   results: false,
+  voted: false,
 })
 
 export const mutations = {
@@ -30,10 +31,14 @@ export const mutations = {
   stopResults(state) {
     state.results = false
   },
+  setVoted(state, voted) {
+    state.voted = voted
+  },
   reset(state) {
     state.started = false
     state.chatting = false
     state.voting = false
     state.results = false
+    state.voted = false
   },
 }

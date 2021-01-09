@@ -17,5 +17,6 @@ export const mutations = {
   reset(state) {
     state.userToken = ''
     state.username = ''
+    state.adminHasAuthenticated = false
   },
 }
