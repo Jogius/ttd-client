@@ -46,31 +46,9 @@
       <v-spacer />
     </v-row>
   </v-container>
-  <v-container v-else-if="$store.state.status.voting" fill-height class="pa-0">
+  <v-container v-else fluid>
     <v-row justify="center">
-      <v-spacer />
-      <v-spacer />
-      <h1>Wer ist der Bot?</h1>
-      <v-spacer />
-      <v-spacer />
-    </v-row>
-    <v-row justify="center">
-      <v-spacer />
-      <v-spacer />
-      <v-btn icon x-large>
-        <v-icon x-large color="partner1">mdi-numeric-1-box</v-icon>
-      </v-btn>
-      <v-spacer />
-      <v-btn icon x-large>
-        <v-icon x-large color="partner2">mdi-numeric-2-box</v-icon>
-      </v-btn>
-      <v-spacer />
-      <v-spacer />
-    </v-row>
-  </v-container>
-  <v-container v-else-if="!$store.state.status.chatting" fluid>
-    <v-row justify="center">
-      <h1>Bitte warte, bis die Chats freigegeben werden!</h1>
+      <h1>Bitte warte, bis die n&auml;chste Phase gestartet wird!</h1>
     </v-row>
     <v-row justify="center">
       <v-subheader>
@@ -112,8 +90,15 @@ export default {
     }
   },
   beforeCreate() {
-    if (this.$store.state.status.chatting && this.$store.state.auth.userToken)
-      this.$router.push('/chats')
+    if (this.$store.state.auth.userToken) {
+      if (this.$store.state.status.chatting) {
+        this.$router.push('/chats')
+      } else if (this.$store.state.status.voting) {
+        this.$router.push('/vote')
+      } else if (this.$store.state.status.results) {
+        this.$router.push('/results')
+      }
+    }
   },
   methods: {
     join() {
@@ -124,6 +109,7 @@ export default {
       })
       if (!valid) return
 
+      // Rejoin with userToken
       this.loadingJoin = true
       this.$socket.emit(
         'auth/join',
@@ -142,6 +128,7 @@ export default {
       })
       if (!valid) return
 
+      // Create new user
       this.loadingCreate = true
       this.$socket.emit(
         'auth/create',
