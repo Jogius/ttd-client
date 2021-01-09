@@ -10,6 +10,7 @@ export default function (app, inject) {
     if (status.voting) app.store.commit('status/startVoting')
     if (status.results) app.store.commit('status/startResults')
   })
+
   socket.on('status/start', () => {
     app.store.commit('status/start')
   })
@@ -22,16 +23,19 @@ export default function (app, inject) {
   })
   socket.on('status/stopChatting', () => {
     app.store.commit('status/stopChatting')
+    app.redirect(200, '/')
   })
   socket.on('status/startVoting', () => {
     app.store.commit('status/startVoting')
-    app.redirect(200, '/')
+    app.redirect(200, '/vote')
   })
   socket.on('status/stopVoting', () => {
     app.store.commit('status/stopVoting')
+    app.redirect(200, '/')
   })
   socket.on('status/startResults', () => {
     app.store.commit('status/startResults')
+    app.redirect(200, '/results')
   })
   socket.on('status/stopResults', () => {
     app.store.commit('status/stopResults')
@@ -44,6 +48,7 @@ export default function (app, inject) {
     app.store.commit('chat1/reset')
     app.store.commit('chat2/reset')
     app.store.commit('status/reset')
+    app.store.commit('results/reset')
     app.redirect(200, '/')
     window.location.reload()
   })
